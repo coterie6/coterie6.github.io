@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coterie 6 Map</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Coterie 6 Map</h1>
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            var options = {
+                zoom: 4,
+                center: {lat: 39.348087, lng: -94.915934}
+            };
+            var map = new google.maps.Map(document.getElementById("map"), options);
+            function addMarker(options) {
+                var marker = new google.maps.Marker({
+                    position: options.coords,
+                    map: map
+                });
+                if (options.icon) {
+                    marker.setIcon(options.icon);
+                }
+                if (options.name) {
+                    var content = "<h1>" + options.name + "</h1>";
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: content
+                    });
+                    marker.addListener("click", function () {
+                        infoWindow.open(map, marker);
+                    });
+                }
+            }
+            /*
+            addMarker({
+                coords: {lat: 39.35398, lng: -94.91998},
+                name: "Fort Leavenworth, KS"
+            });
+            addMarker({
+                coords: {lat: 39.10345, lng: -94.58311},
+                name: "Kansas City, MO"
+            });
+            */
+            addMarker({
+                coords: {lat: 39.348087, lng: -94.915934},
+                name: "School of Advanced Military Studies",
+                icon: "sams-logo.png"
+            });
+            axios({
+                url: "https://api.airtable.com/v0/appUAGkftlEA5caav/Locations",
+                method: "get",
+                headers: {
+                    "Authorization": "Bearer keyAgG52BdBvlu1p6"
+                },
+                timeout: 25000
+            }).then(function(response) {
+                var records = response.data.records;
+                console.log(records);
+                for (var i = 0; i < records.length; i++) {
+                    console.log(records[i].fields.Latitude + " " + records[i].fields.Longitude);
+                    addMarker({
+                        coords: {lat: records[i].fields.Latitude, lng: records[i].fields.Longitude},
+                        name: records[i].fields.Name
+                    });
+                }
+            });
+            
+        }
+    </script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU&callback=initMap">
+    </script>
+</body>
+</html>
