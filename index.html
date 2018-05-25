@@ -13,7 +13,7 @@
 
 <body>
     <h1>Coterie 6 Map</h1>
-    <div id="map"></div>
+    <div id="map">Please check your internet connection.  If you are connected, and you see this message, please email <a href="mailto:ben@soyka.ml">ben@soyka.ml</a>.</div>
     <script>
         function initMap() {
             var options = {
@@ -63,12 +63,24 @@
                 timeout: 25000
             }).then(function(response) {
                 var records = response.data.records;
-                console.log(records);
+                var autocompleteService = new google.maps.places.AutocompleteService();
                 for (var i = 0; i < records.length; i++) {
-                    console.log(records[i].fields.Latitude + " " + records[i].fields.Longitude);
-                    addMarker({
-                        coords: {lat: records[i].fields.Latitude, lng: records[i].fields.Longitude},
-                        name: records[i].fields.Name
+                    var name = records[i].fields.Name;
+                    autocompleteService.getPlacePredictions({
+                        input: records[i].fields.Address
+                    }, function(predictions, status) {
+                        var topResult = encodeURIComponent(predictions[0].description);
+                        axios({
+                            url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + topResult + "&key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU",
+                            method: "get"
+                        }).then(function(response2) {
+                            var data = response2.data;
+                            var latLng = data.results[0].geometry.location;
+                            addMarker({
+                                coords: latLng,
+                                name: name
+                            });
+                        });
                     });
                 }
             });
@@ -76,7 +88,7 @@
         }
     </script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU&callback=initMap&libraries=places">
     </script>
 </body>
 </html>
