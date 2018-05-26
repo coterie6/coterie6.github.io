@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Coterie 6 Map</title>
@@ -8,6 +9,7 @@
             height: 400px;
             width: 100%;
         }
+
         #all-image {
             width: 100%
         }
@@ -18,7 +20,7 @@
     <h1>Where in the world is Coterie 6?</h1>
     <img src="all.jpg" alt="Graduation Photo" id="all-image">
     <hr>
-    <div id="map">Loading...  If you are connected to the internet, and after waiting for one minute you still see this message, please use the bug submission link below.</div>
+    <div id="map">Loading... If you are connected to the internet, and after waiting for one minute you still see this message, please use the bug submission link below.</div>
     <hr>
     <h1><a href="update">Edit your map location.</a></h1>
     <hr>
@@ -33,17 +35,33 @@
         function initMap() {
             var options = {
                 zoom: 4,
-                center: {lat: 39.348087, lng: -94.915934}
+                center: {
+                    lat: 39.348087,
+                    lng: -94.915934
+                }
             };
             var map = new google.maps.Map(document.getElementById("map"), options);
+            var infoWindow = new google.maps.InfoWindow();
+            var contentList = new Array();
+
             function addMarker(options) {
+                var name = options.name;
                 var marker = new google.maps.Marker({
                     position: options.coords,
-                    map: map
+                    map: map,
+                    info: options.markerNumber
                 });
+                contentList[options.markerNumber] = name;
                 if (options.icon) {
                     marker.setIcon(options.icon);
                 }
+                marker.addListener("click", function() {
+                    console.log(contentList);
+                    console.log(marker.info);
+                    console.log(contentList[marker.info]);
+                    infoWindow.setContent(contentList[marker.info]);
+                    infoWindow.open(map, marker);
+                });
             }
             /*
             addMarker({
@@ -56,9 +74,13 @@
             });
             */
             addMarker({
-                coords: {lat: 39.348087, lng: -94.915934},
+                coords: {
+                    lat: 39.348087,
+                    lng: -94.915934
+                },
                 name: "School of Advanced Military Studies",
-                icon: "sams-logo.png"
+                icon: "sams-logo.png",
+                markerNumber: 100
             });
             axios({
                 url: "https://api.airtable.com/v0/appUAGkftlEA5caav/Locations",
@@ -72,58 +94,55 @@
                 console.log(response);
                 var records = response.data.records;
                 var autocompleteService = new google.maps.places.AutocompleteService();
-                for (var i = 0; i < records.length-8; i++) {
-                    console.log(i);
-                    var name = records[i].fields.Name;
-                    autocompleteService.getPlacePredictions({
-                        input: records[i].fields.Address
-                    }, function(predictions, status) {
-                        console.log(status);
-                        var origTopResult = predictions[0] || predictions;
-                        var topResult = encodeURIComponent(origTopResult.description);
-                        axios({
-                            url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + topResult + "&key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU",
-                            method: "get"
-                        }).then(function(response2) {
-                            var data = response2.data;
-                            var latLng = data.results[0].geometry.location;
-                            addMarker({
-                                coords: latLng,
-                                name: name
-                            });
-                        });
-                    });
-                }
+                parseRecord(0, records, autocompleteService);
+                parseRecord(1, records, autocompleteService);
+                parseRecord(2, records, autocompleteService);
+                parseRecord(3, records, autocompleteService);
+                parseRecord(4, records, autocompleteService);
+                parseRecord(5, records, autocompleteService);
+                parseRecord(6, records, autocompleteService);
+                parseRecord(7, records, autocompleteService);
                 setTimeout(function() {
-                    for (var i = 8; i < records.length; i++) {
-                    console.log(i);
-                    var name = records[i].fields.Name;
-                    autocompleteService.getPlacePredictions({
-                        input: records[i].fields.Address
-                    }, function(predictions, status) {
-                        console.log(status);
-                        var origTopResult = predictions[0] || predictions;
-                        var topResult = encodeURIComponent(origTopResult.description);
-                        axios({
-                            url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + topResult + "&key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU",
-                            method: "get"
-                        }).then(function(response2) {
-                            var data = response2.data;
-                            var latLng = data.results[0].geometry.location;
-                            addMarker({
-                                coords: latLng,
-                                name: name
-                            });
-                        });
-                    });
-                }
+                    parseRecord(8, records, autocompleteService);
+                    parseRecord(9, records, autocompleteService);
+                    parseRecord(10, records, autocompleteService);
+                    parseRecord(11, records, autocompleteService);
+                    parseRecord(12, records, autocompleteService);
+                    parseRecord(13, records, autocompleteService);
+                    parseRecord(14, records, autocompleteService);
+                    parseRecord(15, records, autocompleteService);
                 }, 2000)
             });
-            
+
+            function parseRecord(markerNum, records, autocompleteService) {
+                console.log(markerNum);
+                console.log(records);
+                var name = records[markerNum].fields.Name;
+                autocompleteService.getPlacePredictions({
+                    input: records[markerNum].fields.Address
+                }, function(predictions, status) {
+                    console.log(status);
+                    var origTopResult = predictions[0] || predictions;
+                    var topResult = encodeURIComponent(origTopResult.description);
+                    axios({
+                        url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + topResult + "&key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU",
+                        method: "get"
+                    }).then(function(response2) {
+                        var data = response2.data;
+                        var latLng = data.results[0].geometry.location;
+                        addMarker({
+                            coords: latLng,
+                            name: name,
+                            markerNumber: markerNum
+                        });
+                    });
+                });
+            }
         }
     </script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU&callback=initMap&libraries=places">
     </script>
 </body>
+
 </html>

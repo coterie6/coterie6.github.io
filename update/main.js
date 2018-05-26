@@ -41,6 +41,7 @@ function onFormSubmit() {
         }
     }).then(function (response2) {
         console.log(response2);
+        /*
         var groupMeMessage = "Heads up!  " + nameSelect.options[nameSelect.selectedIndex].innerHTML + " has just updated the Coterie 6 Map at https://whereintheworldiscoterie6.tk";
         axios({
             url: "https://api.groupme.com/v3/bots/post",
@@ -54,5 +55,6 @@ function onFormSubmit() {
             var newContent = "<h2>Thank you for updating.</h2>";
             document.getElementById("form").innerHTML = newContent;
         });
+        */
     });
 }
