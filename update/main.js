@@ -39,9 +39,20 @@ function onFormSubmit() {
                 "Address": newAddress
             }
         }
-    }).then(function(response2) {
+    }).then(function (response2) {
         console.log(response2);
-        var newContent = "<h2>Thank you for updating.</h2>";
-        document.getElementById("form").innerHTML = newContent;
+        var groupMeMessage = "Heads up!  " + nameSelect.options[nameSelect.selectedIndex].innerHTML + " has just updated the Coterie 6 Map at https://whereintheworldiscoterie6.tk";
+        axios({
+            url: "https://api.groupme.com/v3/bots/post",
+            method: "post",
+            data: {
+                "bot_id": "fb6991215228d4de434bc44cbc",
+                "text": groupMeMessage
+            }
+        }).then(function (response3) {
+            console.log(response3);
+            var newContent = "<h2>Thank you for updating.</h2>";
+            document.getElementById("form").innerHTML = newContent;
+        });
     });
 }
