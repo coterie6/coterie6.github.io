@@ -3,20 +3,50 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Update your Location</title>
+    <title>Update your Data</title>
     <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
     <script src="main.js"></script>
+    <style>
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
 </head>
 
 <body onload="onBodyLoad();">
-    <h1>Update your Location</h1>
+    <h1>Update your Data</h1>
     <h3><a href="..">Return to map</a></h3>
     <hr>
-    <div id="form">
-        <select name="name-select" id="name-select"></select>
-        <input type="text" name="address" id="address">
-        <input type="submit" value="Update address" onclick="onFormSubmit();">
+    <h2 class="highlight">Select your name:</h2>
+    <select name="name-select" id="name-select"></select>
+    <hr>
+    <hr>
+    <div id="locationForm">
+        <h3>Edit your location:</h3>
+        <input type="text" name="address" id="address" placeholder="New Location">
+        <input type="submit" value="Update address" onclick="onLocationSubmit();">
+        <br>
+        <input type="button" value="Auto-fill with GPS" onclick="autoFillGPS();">
     </div>
+    <hr>
+    <div id="jobForm">
+        <h3>Edit your job title:</h3>
+        <input type="text" name="jobTitle" id="jobTitle" placeholder="New Job Title">
+        <input type="submit" value="Update job title" onclick="onJobSubmit();">
+    </div>
+    <hr>
+    <div id="emailForm">
+        <h3>Edit your email:</h3>
+        <input type="text" name="email" id="email" placeholder="New Email">
+        <input type="submit" value="Update email" onclick="onEmailSubmit();">
+    </div>
+    <hr>
+    <div id="phoneForm">
+        <h3>Edit your phone number:</h3>
+        <input type="text" name="phoneNumber" id="phoneNumber" placeholder="New Phone Number">
+        <input type="submit" value="Update phone number" onclick="onPhoneSubmit();">
+    </div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT3dPboP5l3TKcaNRv4BodFmIrDyHX4HU"></script>
 </body>
 
 </html>

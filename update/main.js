@@ -1,6 +1,6 @@
 function onBodyLoad() {
     axios({
-        url: "https://api.airtable.com/v0/appUAGkftlEA5caav/Locations",
+        url: "https://api.airtable.com/v0/appUAGkftlEA5caav/People",
         method: "get",
         headers: {
             "Authorization": "Bearer keyAgG52BdBvlu1p6"
@@ -23,11 +23,11 @@ function onBodyLoad() {
     });
 }
 
-function onFormSubmit() {
+function onLocationSubmit() {
     var nameSelect = document.getElementById("name-select");
     var recordId = nameSelect.options[nameSelect.selectedIndex].id;
     var newAddress = document.getElementById("address").value;
-    var patchUrl = "https://api.airtable.com/v0/appUAGkftlEA5caav/Locations/" + recordId;
+    var patchUrl = "https://api.airtable.com/v0/appUAGkftlEA5caav/People/" + recordId;
     axios({
         url: patchUrl,
         method: "patch",
@@ -51,8 +51,108 @@ function onFormSubmit() {
             }
         }).then(function (response3) {
             console.log(response3);
-            var newContent = "<h2>Thank you for updating.</h2>";
-            document.getElementById("form").innerHTML = newContent;
+            var newContent = "<h2>Thank you for updating your location.</h2>";
+            document.getElementById("locationForm").innerHTML = newContent;
         });
+    });
+}
+
+function autoFillGPS() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(parseGPSPosition);
+    } else {
+        alert("Your browser does not support location services.");
+    }
+}
+
+function parseGPSPosition(position) {
+    var geocoder = new google.maps.Geocoder();
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    var latLng = {
+        lat: latitude,
+        lng: longitude
+    };
+    geocoder.geocode({
+        'location': latLng
+    }, function (results, status) {
+        if (status === 'OK') {
+            if (results[0]) {
+                document.getElementById("address").value = results[0].formatted_address;
+            } else {
+                alert('No results found');
+            }
+        } else {
+            alert('Geocoder failed due to: ' + status);
+        }
+    });
+}
+
+function onJobSubmit() {
+    var nameSelect = document.getElementById("name-select");
+    var recordId = nameSelect.options[nameSelect.selectedIndex].id;
+    var newJob = document.getElementById("jobTitle").value;
+    var patchUrl = "https://api.airtable.com/v0/appUAGkftlEA5caav/People/" + recordId;
+    axios({
+        url: patchUrl,
+        method: "patch",
+        headers: {
+            "Authorization": "Bearer keyAgG52BdBvlu1p6"
+        },
+        data: {
+            fields: {
+                "Job Title": newJob
+            }
+        }
+    }).then(function (response2) {
+        console.log(response2);
+        var newContent = "<h2>Thank you for updating your job title.</h2>";
+        document.getElementById("jobForm").innerHTML = newContent;
+    });
+}
+
+function onEmailSubmit() {
+    var nameSelect = document.getElementById("name-select");
+    var recordId = nameSelect.options[nameSelect.selectedIndex].id;
+    var newEmail = document.getElementById("email").value;
+    var patchUrl = "https://api.airtable.com/v0/appUAGkftlEA5caav/People/" + recordId;
+    axios({
+        url: patchUrl,
+        method: "patch",
+        headers: {
+            "Authorization": "Bearer keyAgG52BdBvlu1p6"
+        },
+        data: {
+            fields: {
+                "Email": newEmail
+            }
+        }
+    }).then(function (response2) {
+        console.log(response2);
+        var newContent = "<h2>Thank you for updating your email.</h2>";
+        document.getElementById("emailForm").innerHTML = newContent;
+    });
+}
+
+function onPhoneSubmit() {
+    var nameSelect = document.getElementById("name-select");
+    var recordId = nameSelect.options[nameSelect.selectedIndex].id;
+    var newPhone = document.getElementById("phoneNumber").value;
+    var patchUrl = "https://api.airtable.com/v0/appUAGkftlEA5caav/People/" + recordId;
+    axios({
+        url: patchUrl,
+        method: "patch",
+        headers: {
+            "Authorization": "Bearer keyAgG52BdBvlu1p6"
+        },
+        data: {
+            fields: {
+                "Phone": newPhone
+            }
+        }
+    }).then(function (response2) {
+        console.log(response2);
+        var newContent = "<h2>Thank you for updating your phone number.</h2>";
+        document.getElementById("phoneForm").innerHTML = newContent;
     });
 }

@@ -18,11 +18,12 @@
 
 <body>
     <h1>Where in the world is Coterie 6?</h1>
-    <img src="all.jpg" alt="Graduation Photo" id="all-image">
+    <img src="all.JPG" alt="Graduation Photo" id="all-image">
     <hr>
     <div id="map">Loading... If you are connected to the internet, and after waiting for one minute you still see this message, please use the bug submission link below.</div>
     <hr>
-    <h1><a href="update">Edit your map location.</a></h1>
+    <h2><a href="update">Edit your data.</a></h2>
+    <h2><a href="roster">View the full roster.</a></h2>
     <hr>
     <h2>Send a message:</h2>
     <ul>
@@ -46,12 +47,27 @@
 
             function addMarker(options) {
                 var name = options.name;
+                if (options.job) {
+                    var job = options.job;
+                } else {
+                    var job = "Unknown job";
+                }
+                if (options.email) {
+                    var email = options.email;
+                } else {
+                    var email = "Unknown email";
+                }
+                if (options.phone) {
+                    var phone = options.phone;
+                } else {
+                    var phone = "Unknown phone";
+                }
                 var marker = new google.maps.Marker({
                     position: options.coords,
                     map: map,
                     info: options.markerNumber
                 });
-                contentList[options.markerNumber] = name;
+                contentList[options.markerNumber] = "<b>" + name + "</b><br><i>" + job + "</i><br>Email: " + email + "<br>Phone: " + phone;
                 if (options.icon) {
                     marker.setIcon(options.icon);
                 }
@@ -80,10 +96,11 @@
                 },
                 name: "School of Advanced Military Studies",
                 icon: "sams-logo.png",
-                markerNumber: 100
+                markerNumber: 100,
+                job: "SAMS"
             });
             axios({
-                url: "https://api.airtable.com/v0/appUAGkftlEA5caav/Locations",
+                url: "https://api.airtable.com/v0/appUAGkftlEA5caav/People",
                 method: "get",
                 headers: {
                     "Authorization": "Bearer keyAgG52BdBvlu1p6"
@@ -118,6 +135,9 @@
                 console.log(markerNum);
                 console.log(records);
                 var name = records[markerNum].fields.Name;
+                var job = records[markerNum].fields["Job Title"];
+                var email = records[markerNum].fields.Email;
+                var phone = records[markerNum].fields.Phone;
                 autocompleteService.getPlacePredictions({
                     input: records[markerNum].fields.Address
                 }, function(predictions, status) {
@@ -133,7 +153,10 @@
                         addMarker({
                             coords: latLng,
                             name: name,
-                            markerNumber: markerNum
+                            markerNumber: markerNum,
+                            job: job,
+                            email: email,
+                            phone: phone
                         });
                     });
                 });
