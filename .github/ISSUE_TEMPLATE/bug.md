@@ -1,3 +1,8 @@
+---
+name: Bug report
+about: Notice a bug anywhere?  Report it here.
+---
+
 # I have found a bug.
 Replace this line with a description of the bug.
 ## My system details are:
