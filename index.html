@@ -31,6 +31,7 @@
     <a href="https://github.com/coterie6/coterie6.github.io/issues/new?template=suggestion.md">Suggestion</a>
     <a href="https://github.com/coterie6/coterie6.github.io/issues/new?template=question.md">Question</a>
     <a href="https://github.com/coterie6/coterie6.github.io/issues/new?template=comment.md">Comment</a>
+    <script src="md5.min.js"></script>
     <script>
         function initMap() {
             var options = {
@@ -60,6 +61,9 @@
                     var phone = options.phone;
                 } else {
                     var phone = "Unknown phone";
+                }
+                if (options.gravatar) {
+                    options.icon = "https://www.gravatar.com/avatar/" + md5(options.gravatar) + "?s=30";
                 }
                 var marker = new google.maps.Marker({
                     position: options.coords,
@@ -137,6 +141,9 @@
                 var job = records[markerNum].fields["Job Title"];
                 var email = records[markerNum].fields.Email;
                 var phone = records[markerNum].fields.Phone;
+                if (records[markerNum].fields.Gravatar) {
+                    var gravatar = records[markerNum].fields.Gravatar;
+                }
                 autocompleteService.getPlacePredictions({
                     input: records[markerNum].fields.Address
                 }, function(predictions, status) {
@@ -149,14 +156,26 @@
                     }).then(function(response2) {
                         var data = response2.data;
                         var latLng = data.results[0].geometry.location;
-                        addMarker({
-                            coords: latLng,
-                            name: name,
-                            markerNumber: markerNum,
-                            job: job,
-                            email: email,
-                            phone: phone
-                        });
+                        if (gravatar) {
+                            addMarker({
+                                coords: latLng,
+                                name: name,
+                                markerNumber: markerNum,
+                                job: job,
+                                email: email,
+                                phone: phone,
+                                gravatar: gravatar
+                            });
+                        } else {
+                            addMarker({
+                                coords: latLng,
+                                name: name,
+                                markerNumber: markerNum,
+                                job: job,
+                                email: email,
+                                phone: phone
+                            });
+                        }
                     });
                 });
             }
