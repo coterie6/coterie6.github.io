@@ -156,3 +156,26 @@ function onPhoneSubmit() {
         document.getElementById("phoneForm").innerHTML = newContent;
     });
 }
+
+function onGravatarSubmit() {
+    var nameSelect = document.getElementById("name-select");
+    var recordId = nameSelect.options[nameSelect.selectedIndex].id;
+    var newGravatar = document.getElementById("gravatar").value;
+    var patchUrl = "https://api.airtable.com/v0/appUAGkftlEA5caav/People/" + recordId;
+    axios({
+        url: patchUrl,
+        method: "patch",
+        headers: {
+            "Authorization": "Bearer keyAgG52BdBvlu1p6"
+        },
+        data: {
+            fields: {
+                "Gravatar": newGravatar
+            }
+        }
+    }).then(function (response2) {
+        console.log(response2);
+        var newContent = "<h2>Thank you for updating your Gravatar email address.</h2>";
+        document.getElementById("gravatarForm").innerHTML = newContent;
+    });
+}
